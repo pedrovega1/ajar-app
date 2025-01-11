@@ -3,140 +3,132 @@ import React, { useState } from "react";
 import ParticlesBg from "particles-bg";
 
 const sendTelegramMessage = async (message) => {
-    const botToken = "8056958271:AAH7Q_OOjKoZn2_5WwHNUTMS8_ULGAxNrLs";
-    const chatId = "-1002437147460";
-    const telegramUrl = `https://api.telegram.org/bot${botToken}/sendMessage`;
-  
-    try {
-      const response = await fetch(telegramUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          chat_id: chatId,
-          text: message,
-        }),
-      });
-  
-      if (!response.ok) {
-        console.error(
-          "Ошибка при отправке сообщения в Telegram:",
-          response.statusText
-        );
-      }
-    } catch (error) {
-      console.error("Ошибка сети при отправке сообщения в Telegram:", error);
+  const botToken = "8056958271:AAH7Q_OOjKoZn2_5WwHNUTMS8_ULGAxNrLs";
+  const chatId = "-1002437147460";
+  const telegramUrl = `https://api.telegram.org/bot${botToken}/sendMessage`;
+
+  try {
+    const response = await fetch(telegramUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        chat_id: chatId,
+        text: message,
+      }),
+    });
+
+    if (!response.ok) {
+      console.error(
+        "Ошибка при отправке сообщения в Telegram:",
+        response.statusText
+      );
     }
+  } catch (error) {
+    console.error("Ошибка сети при отправке сообщения в Telegram:", error);
+  }
+};
+
+const QuizGame = () => {
+  const [isGameOpen, setIsGameOpen] = useState(false);
+  const [gameState, setGameState] = useState({});
+  const [showResult, setShowResult] = useState(false);
+  const [selectedAnswer, setSelectedAnswer] = useState(null);
+  const [answersHistory, setAnswersHistory] = useState([]);
+
+  const questions = [
+    {
+      question: "Как зовут вашего любимого корейцы?",
+      options: ["Влад", "Слава", "Элеонора", "Светлана"],
+      correct: "Влад",
+    },
+    {
+      question: "Где вы познакомились?",
+      options: ["Кафе", "Дайвинчик", "Tinder", "На работе"],
+      correct: "Tinder",
+    },
+    {
+      question: "Какой любимый цвет Влада",
+      options: ["Зеленый", "Бордовый", "Коричневый", "Желтый"],
+      correct: "Коричневый",
+    },
+    {
+      question: "Любимый ASU",
+      options: ["Мята", "Лимон", "Клубника-киви", "Вода"],
+      correct: "Мята",
+    },
+    {
+      question: "Любимый исполнитель",
+      options: ["Nujabes", "Moldanazar", "PSY", "KPOP"],
+      correct: "Nujabes",
+    },
+  ];
+
+  const startGame = () => {
+    setGameState({ currentQuestion: 0, score: 0, answeredQuestions: [] });
+    setShowResult(false);
+    setIsGameOpen(true);
+    setSelectedAnswer(null);
+    setAnswersHistory([]);
   };
-  
-  const QuizGame = () => {
-    const [isGameOpen, setIsGameOpen] = useState(false);
-    const [gameState, setGameState] = useState({});
-    const [showResult, setShowResult] = useState(false);
-    const [selectedAnswer, setSelectedAnswer] = useState(null);
-    const [answersHistory, setAnswersHistory] = useState([]);
-  
-    const questions = [
+
+  const handleAnswer = (answer) => {
+    const currentQuestionIndex = gameState.currentQuestion;
+    const alreadyAnswered = gameState.answeredQuestions.includes(currentQuestionIndex);
+
+    if (alreadyAnswered) return;
+
+    setSelectedAnswer(answer);
+
+    setAnswersHistory((prev) => [
+      ...prev,
       {
-        question: "Как зовут вашего любимого корейцы?",
-        options: ["Влад", "Слава", "Элеонора", "Светлана"],
-        correct: "Влад",
+        question: questions[currentQuestionIndex].question,
+        selectedAnswer: answer,
+        correctAnswer: questions[currentQuestionIndex].correct,
+        isCorrect: answer === questions[currentQuestionIndex].correct,
       },
-      {
-        question: "Где вы познакомились?",
-        options: ["Кафе", "Дайвинчик", "Tinder", "На работе"],
-        correct: "Tinder",
-      },
-      {
-        question: "Какой любимый цвет Влада",
-        options: ["Зеленый", "Бордовый", "Коричневый", "Желтый"],
-        correct: "Коричневый",
-      },
-      {
-        question: "Любимый ASU",
-        options: ["Мята", "Лимон", "Клубника-киви", "Вода"],
-        correct: "Мята",
-      },
-      {
-        question: "Любимый исполнитель",
-        options: ["Nujabes", "Moldanazar", "PSY", "KPOP"],
-        correct: "Nujabes",
-      },
-    ];
-  
-    // Создаем объект для воспроизведения звука
-    const victorySound = typeof Audio !== "undefined" ? new Audio("/sound/kids.mp3") : null;
-  
-    const startGame = () => {
-      setGameState({ currentQuestion: 0, score: 0, answeredQuestions: [] });
-      setShowResult(false);
-      setIsGameOpen(true);
-      setSelectedAnswer(null);
-      setAnswersHistory([]);
-    };
-  
-    const handleAnswer = (answer) => {
-      const currentQuestionIndex = gameState.currentQuestion;
-      const alreadyAnswered = gameState.answeredQuestions.includes(currentQuestionIndex);
-  
-      if (alreadyAnswered) return;
-  
-      setSelectedAnswer(answer);
-  
-      setAnswersHistory((prev) => [
-        ...prev,
-        {
-          question: questions[currentQuestionIndex].question,
-          selectedAnswer: answer,
-          correctAnswer: questions[currentQuestionIndex].correct,
-          isCorrect: answer === questions[currentQuestionIndex].correct,
-        },
-      ]);
-  
-      if (answer === questions[currentQuestionIndex].correct) {
-        setGameState((prev) => ({
-          ...prev,
-          score: prev.score + 1,
-        }));
-      }
-  
+    ]);
+
+    if (answer === questions[currentQuestionIndex].correct) {
       setGameState((prev) => ({
         ...prev,
-        answeredQuestions: [...prev.answeredQuestions, currentQuestionIndex],
+        score: prev.score + 1,
       }));
-  
-      setTimeout(() => {
-        setSelectedAnswer(null);
-        if (currentQuestionIndex + 1 < questions.length) {
-          setGameState((prev) => ({
-            ...prev,
-            currentQuestion: prev.currentQuestion + 1,
-          }));
-        } else {
-          setShowResult(true);
-  
-          // Воспроизведение звука
-          if (victorySound) {
-            victorySound.play();
-          }
-  
-          // Отправка результатов в Telegram
-          const resultsMessage = `🎮 Итоги игры:\n\n${answersHistory
-            .map(
-              (entry, index) =>
-                `${index + 1}. Вопрос: ${entry.question}\nВыбранный ответ: ${
-                  entry.selectedAnswer
-                }\nПравильный ответ: ${entry.correctAnswer}\nРезультат: ${
-                  entry.isCorrect ? "✅" : "❌"
-                }`
-            )
-            .join("\n")}\n\nИтоговый счет: ${
-            gameState.score
-          } из ${questions.length}`;
-          sendTelegramMessage(resultsMessage);
-        }
-      }, 1000);
-    };
-  
+    }
+
+    setGameState((prev) => ({
+      ...prev,
+      answeredQuestions: [...prev.answeredQuestions, currentQuestionIndex],
+    }));
+
+    setTimeout(() => {
+      setSelectedAnswer(null);
+      if (currentQuestionIndex + 1 < questions.length) {
+        setGameState((prev) => ({
+          ...prev,
+          currentQuestion: prev.currentQuestion + 1,
+        }));
+      } else {
+        setShowResult(true);
+
+        // Отправка результатов в Telegram
+        const resultsMessage = `🎮 Итоги игры:\n\n${answersHistory
+          .map(
+            (entry, index) =>
+              `${index + 1}. Вопрос: ${entry.question}\nВыбранный ответ: ${
+                entry.selectedAnswer
+              }\nПравильный ответ: ${entry.correctAnswer}\nРезультат: ${
+                entry.isCorrect ? "✅" : "❌"
+              }`
+          )
+          .join("\n")}\n\nИтоговый счет: ${
+          gameState.score
+        } из ${questions.length}`;
+        sendTelegramMessage(resultsMessage);
+      }
+    }, 1000);
+  };
+
   return (
     <div className="relative min-h-screen bg-red-500/40">
       {/* Фоновая анимация */}
@@ -228,8 +220,7 @@ const sendTelegramMessage = async (message) => {
           </div>
         </div>
       )}
-
-      <style jsx>{`
+       <style jsx>{`
         .starwars-intro {
           position: relative;
           width: 100%;
