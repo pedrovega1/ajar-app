@@ -2,11 +2,12 @@ import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import QuizGame from "@/components/QuizGame";
 
+
 function About() {
   return (
     <main>
       <Header />
-      <QuizGame />
+      <QuizGame/>
       <Footer/>
     </main>
   );
