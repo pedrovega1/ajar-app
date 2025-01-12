@@ -126,13 +126,13 @@ const QuizGame = () => {
   };
 
   return (
-    <div className="relative min-h-screen bg-gray-200">
- 
+    <div className="relative min-h-screen bg-red-400/40">
+      <ParticlesBg type="cobweb" bg={true} />
 
-      <div className="text-center  py-2 ">
+      <div className="text-center py-2 ">
         <button
           onClick={startGame}
-          className="bg-blue-500 text-white px-6 py-2 rounded-lg shadow-lg hover:bg-blue-600 transition-all"
+          className=" bg-gradient-to-r from-pink-300 to-pink-500 text-white22222222 px-6 py-2 rounded-lg shadow-lg hover:bg-blue-600 transition-all"
         >
           Начать игру
         </button>
@@ -170,12 +170,14 @@ const QuizGame = () => {
       {isGameOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
           <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full relative">
-            <button
-              onClick={() => setIsGameOpen(false)}
-              className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
-            >
-              ✖
-            </button>
+            {showResult && (
+              <button
+                onClick={() => setIsGameOpen(false)}
+                className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+              >
+                ✖
+              </button>
+            )}
             {showResult ? (
               <div className="text-center">
                 <h2 className="text-2xl font-bold text-green-500">
@@ -208,6 +210,7 @@ const QuizGame = () => {
           </div>
         </div>
       )}
+
       <style jsx>{`
         .starwars-intro {
           position: relative;

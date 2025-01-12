@@ -52,8 +52,8 @@ export default function Header() {
             </Link>
           </li>
           <li>
-            <Link href="/contact" className="font-semibold hover:text-yellow-300 transition-colors duration-300 block lg:inline-block">
-              Contact
+            <Link href="/games" className="font-semibold hover:text-yellow-300 transition-colors duration-300 block lg:inline-block">
+              ???
             </Link>
           </li>
         </ul>
